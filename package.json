@@ -1,6 +1,6 @@
 {
   "name": "vue-breakpointer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple Vue mixin to augment your Vue instance with a breakpoint helpers",
   "author": {
     "name": "Jonathan James Cosgrove",

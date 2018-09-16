@@ -7,7 +7,7 @@ const VueBreakpointer = {
       lg: 1200
     }
 
-    const breakpoints = options.breakpoints ? options.breakpoints : defaults
+    const breakpoints = options && options.breakpoints ? options.breakpoints : defaults
 
     Vue.mixin('VueBreakpointer', {
       data () {
