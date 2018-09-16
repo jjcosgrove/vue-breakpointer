@@ -721,7 +721,7 @@
 	      md: 720,
 	      lg: 1200
 	    };
-	    var breakpoints = options.breakpoints ? options.breakpoints : defaults;
+	    var breakpoints = options && options.breakpoints ? options.breakpoints : defaults;
 	    Vue.mixin('VueBreakpointer', {
 	      data: function data() {
 	        return {
