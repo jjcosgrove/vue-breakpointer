@@ -121,70 +121,77 @@ $export$1($export$1.P + $export$1.F * !require('./_strict-method')([].filter, tr
   }
 });
 
-var VueBreakpointer = {
-  install: function install(Vue, options) {
-    var defaults = {
-      xs: 320,
-      sm: 480,
-      md: 720,
-      lg: 1200
-    };
-    var breakpoints = options && options.breakpoints ? options.breakpoints : defaults;
-    Vue.mixin('VueBreakpointer', {
-      data: function data() {
-        return {
-          windowDimensions: {
-            width: 0,
-            height: 0
-          },
-          breakpoints: breakpoints
-        };
-      },
-      computed: {
-        xs: function xs() {
-          return this.windowDimensions.width <= 320;
-        },
-        sm: function sm() {
-          return this.windowDimensions.width > this.breakpoints.xs && this.windowDimensions.width <= 480;
-        },
-        md: function md() {
-          return this.windowDimensions.width > this.breakpoints.sm && this.windowDimensions.width <= 720;
-        },
-        lg: function lg() {
-          return this.windowDimensions.width > this.breakpoints.md && this.windowDimensions.width <= 1200;
-        },
-        xl: function xl() {
-          return this.windowDimensions.width > this.breakpoints.lg;
-        },
-        breakpoint: function breakpoint() {
-          var _this = this;
-
-          var bpd = Object.keys(this.breakpoints).map(function (bp) {
-            return {
-              breakpoint: bp,
-              isActive: _this[bp]
-            };
-          }).filter(function (bp) {
-            return bp.isActive;
-          });
-          return bpd.length ? bpd.pop().breakpoint : 'xl';
-        }
-      },
-      methods: {
-        updateWindowDimensions: function updateWindowDimensions() {
-          this.windowDimensions.width = window.innerWidth;
-          this.windowDimensions.height = window.innerHeight;
-        }
-      },
-      mounted: function mounted() {
-        window.addEventListener('resize', this.updateWindowDimensions);
-        this.updateWindowDimensions();
-      },
-      beforeDestroy: function beforeDestroy() {
-        window.removeEventListener('resize', this.updateWindowDimensions);
-      }
-    });
-  }
+var defaults = {
+  xs: 320,
+  sm: 480,
+  md: 720,
+  lg: 1200
 };
 
+var generateMixin = function generateMixin(breakpoints) {
+  return {
+    data: function data() {
+      return {
+        windowDimensions: {
+          width: 0,
+          height: 0
+        },
+        breakpoints: breakpoints
+      };
+    },
+    computed: {
+      xs: function xs() {
+        return this.windowDimensions.width <= this.breakpoints.xs;
+      },
+      sm: function sm() {
+        return this.windowDimensions.width > this.breakpoints.xs && this.windowDimensions.width <= this.breakpoints.sm;
+      },
+      md: function md() {
+        return this.windowDimensions.width > this.breakpoints.sm && this.windowDimensions.width <= this.breakpoints.md;
+      },
+      lg: function lg() {
+        return this.windowDimensions.width > this.breakpoints.md && this.windowDimensions.width <= this.breakpoints.lg;
+      },
+      xl: function xl() {
+        return this.windowDimensions.width > this.breakpoints.lg;
+      },
+      breakpoint: function breakpoint() {
+        var _this = this;
+
+        var bpd = Object.keys(this.breakpoints).map(function (bp) {
+          return {
+            breakpoint: bp,
+            isActive: _this[bp]
+          };
+        }).filter(function (bp) {
+          return bp.isActive;
+        });
+        return bpd.length ? bpd.pop().breakpoint : 'xl';
+      }
+    },
+    methods: {
+      updateWindowDimensions: function updateWindowDimensions() {
+        this.windowDimensions.width = window.innerWidth;
+        this.windowDimensions.height = window.innerHeight;
+      }
+    },
+    mounted: function mounted() {
+      window.addEventListener('resize', this.updateWindowDimensions);
+      this.updateWindowDimensions();
+    },
+    beforeDestroy: function beforeDestroy() {
+      window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+  };
+};
+
+var VueBreakpointer = {
+  install: function install(Vue, options) {
+    var breakpoints = options && options.breakpoints ? options.breakpoints : defaults;
+    Vue.mixin(generateMixin(breakpoints));
+  }
+};
+var VueBreakpointerMixin = generateMixin(defaults);
+
 export default VueBreakpointer;
+export { VueBreakpointerMixin };
