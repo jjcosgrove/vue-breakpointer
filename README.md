@@ -94,3 +94,6 @@ export default {
   </div>
 </template>
 ```
+
+## Example
+https://jsfiddle.net/5k6v07br/
