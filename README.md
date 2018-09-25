@@ -1,27 +1,28 @@
 # Vue Breakpointer
 
-A simple Vue mixin to augment your Vue instance with a breakpoint helpers
+A simple Vue plugin/mixin to augment your Vue instance with breakpoint helpers
 
 ## Install
 
-### Node.js / Webpack
+### NPM/Yarn
 
 ```bash
 npm install vue-breakpointer --save
 ```
+
 or
 
 ```bash
 yarn add vue-breakpointer --save
 ```
 
-### UMD / Browser
+### Browser
 
 ```html
 <script src="https://unpkg.com/vue-breakpointer"></script>
 ```
 
-## Global usage
+## Plugin
 
 ```js
 import VueBreakpointer from 'vue-breakpointer'
@@ -29,46 +30,67 @@ import VueBreakpointer from 'vue-breakpointer'
 Vue.use(VueBreakpointer, {
   // defaults
   breakpoints: {
-    xs: 320,
-    sm: 480,
-    md: 720,
-    lg: 1200
+    sm: 576,
+    md: 768,
+    lg: 992,
+    xl: 1200
   }
 })
 ...
 ```
 
-## Component usage
+## Mixin
 
 ```js
-// some component
+import { VueBreakpointerMixin } from 'vue-breakpointer'
 ...
-import VueBreakpointer from 'vue-breakpointer'
-
 export default {
   ...
-  mixins: [ VueBreakpointer ],
-  mounted () {
-    // initial values
-    console.log(windowDimensions: this.windowDimensions)
-    console.log(breakpoint: this.breakpoint)
+  mixins: [ VueBreakpointerMixin ],
+  data () {
+    return {
+      // defaults
+      breakpoints: {
+        sm: 576,
+        md: 768,
+        lg: 992,
+        xl: 1200
+      }
+    }
   }
   ...
 }
 ...
 ```
 
-## General usage
+## Data & Computed Properties
+
+| Property  | Type | Description |
+| ------------- | ------------- | ------------- |
+| windowDimensions  | Object | On object containing both the current window width & height (in pixels)  |
+| xs  | Boolean | < sm |
+| sm  | Boolean | >= sm && < md  |
+| md  | Boolean | >= md && < lg  |
+| lg  | Boolean | >= lg && < xl  |
+| xl  | Boolean | >= xl  |
+
+## Example usage
 
 ```html
 <template>
   <div>
-    <!-- show both window.width and window.height -->
+    <!-- an object showing both width and height of window -->
     <pre>{{windowDimensions}}</pre>
-    <!-- show the current breakpoint -->
+
+    <!-- the current breakpoint -->
     <pre>{{breakpoint}}</pre>
 
+    <!-- use to determine visibility of elements and components at certain breakpoints -->
     <div v-if="xs">I am visible only on xs screens</div>
+    <div v-if="sm">I am visible only on sm screens</div>
+    <div v-if="md">I am visible only on md screens</div>
+    <div v-if="lg">I am visible only on lg screens</div>
+    <div v-if="xl">I am visible only on xl screens</div>
   </div>
 </template>
 ```

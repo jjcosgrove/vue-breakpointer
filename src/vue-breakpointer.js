@@ -1,8 +1,16 @@
-const defaults = {
-  xs: 320,
-  sm: 480,
-  md: 720,
-  lg: 1200
+const breakpointNames = [
+  'xs',
+  'sm',
+  'md',
+  'lg',
+  'xl'
+]
+
+const breakpointDefaults = {
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200
 }
 
 const generateMixin = (breakpoints) => {
@@ -18,31 +26,31 @@ const generateMixin = (breakpoints) => {
     },
     computed: {
       xs () {
-        return this.windowDimensions.width <= this.breakpoints.xs
+        return this.windowDimensions.width < this.breakpoints.sm
       },
       sm () {
-        return (this.windowDimensions.width > this.breakpoints.xs) &&
-          (this.windowDimensions.width <= this.breakpoints.sm)
+        return (this.windowDimensions.width >= this.breakpoints.sm) &&
+          (this.windowDimensions.width < this.breakpoints.md)
       },
       md () {
-        return (this.windowDimensions.width > this.breakpoints.sm) &&
-          (this.windowDimensions.width <= this.breakpoints.md)
+        return (this.windowDimensions.width >= this.breakpoints.md) &&
+          (this.windowDimensions.width < this.breakpoints.lg)
       },
       lg () {
-        return (this.windowDimensions.width > this.breakpoints.md) &&
-          (this.windowDimensions.width <= this.breakpoints.lg)
+        return (this.windowDimensions.width >= this.breakpoints.lg) &&
+          (this.windowDimensions.width < this.breakpoints.xl)
       },
       xl () {
-        return this.windowDimensions.width > this.breakpoints.lg
+        return this.windowDimensions.width >= this.breakpoints.xl
       },
       breakpoint () {
-        let bpd = Object.keys(this.breakpoints).map(bp => {
-          return {
-            breakpoint: bp,
-            isActive: this[bp]
-          }
-        }).filter(bp => bp.isActive)
-        return bpd.length ? bpd.pop().breakpoint : 'xl'
+        // find which breakpoints is currently active
+        return breakpointNames
+          .map(breakpointName => ({
+            name: breakpointName,
+            active: this[breakpointName]
+          }))
+          .find(breakpoint => breakpoint.active).name
       }
     },
     methods: {
@@ -52,10 +60,14 @@ const generateMixin = (breakpoints) => {
       }
     },
     mounted () {
+      // add listener
       window.addEventListener('resize', this.updateWindowDimensions)
+
+      // initialize with values
       this.updateWindowDimensions()
     },
     beforeDestroy () {
+      // remove listener
       window.removeEventListener('resize', this.updateWindowDimensions)
     }
   }
@@ -63,12 +75,28 @@ const generateMixin = (breakpoints) => {
 
 const VueBreakpointer = {
   install: (Vue, options) => {
-    const breakpoints = options && options.breakpoints ? options.breakpoints : defaults
+    // basic check for breakpoints
+    const hasBreakpoints = options &&
+      options.breakpoints &&
+      typeof options.breakpoints === 'object'
+
+    // only allow options to take effect when *all* breakpoints are provided
+    const hasAllBreakpoints = hasBreakpoints &&
+      Object.keys(breakpointDefaults)
+        .every(breakpoint => Object.keys(options.breakpoints).includes(breakpoint))
+
+    // show a warning for partial breakpoint configuration
+    if (hasBreakpoints && !hasAllBreakpoints) {
+      console.warn('VueBreakpointer: you must provide either all or no breakpoints')
+    }
+
+    // assign breakpoints
+    const breakpoints = hasAllBreakpoints ? options.breakpoints : breakpointDefaults
     Vue.mixin(generateMixin(breakpoints))
   }
 }
 
-const VueBreakpointerMixin = generateMixin(defaults)
+const VueBreakpointerMixin = generateMixin(breakpointDefaults)
 
-export default VueBreakpointer
 export { VueBreakpointerMixin }
+export default VueBreakpointer

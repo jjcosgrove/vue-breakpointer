@@ -1,3 +1,27 @@
+// https://github.com/tc39/Array.prototype.includes
+var $export = require('./_export');
+var $includes = require('./_array-includes')(true);
+
+$export($export.P, 'Array', {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+require('./_add-to-unscopables')('includes');
+
+// 21.1.3.7 String.prototype.includes(searchString, position = 0)
+var $export$1 = require('./_export');
+var context = require('./_string-context');
+var INCLUDES = 'includes';
+
+$export$1($export$1.P + $export$1.F * require('./_fails-is-regexp')(INCLUDES), 'String', {
+  includes: function includes(searchString /* , position = 0 */) {
+    return !!~context(this, searchString, INCLUDES)
+      .indexOf(searchString, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
 var $iterators = require('./es6.array.iterator');
 var getKeys = require('./_object-keys');
 var redefine = require('./_redefine');
@@ -101,31 +125,72 @@ require('./_object-sap')('keys', function () {
   };
 });
 
-var $export = require('./_export');
+// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
+var $export$2 = require('./_export');
+
+$export$2($export$2.S, 'Array', { isArray: require('./_is-array') });
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+var $export$3 = require('./_export');
 var $map = require('./_array-methods')(1);
 
-$export($export.P + $export.F * !require('./_strict-method')([].map, true), 'Array', {
+$export$3($export$3.P + $export$3.F * !require('./_strict-method')([].map, true), 'Array', {
   // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
   map: function map(callbackfn /* , thisArg */) {
     return $map(this, callbackfn, arguments[1]);
   }
 });
 
-var $export$1 = require('./_export');
-var $filter = require('./_array-methods')(2);
+// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+var $export$4 = require('./_export');
+var $find = require('./_array-methods')(5);
+var KEY = 'find';
+var forced = true;
+// Shouldn't skip holes
+if (KEY in []) Array(1)[KEY](function () { forced = false; });
+$export$4($export$4.P + $export$4.F * forced, 'Array', {
+  find: function find(callbackfn /* , that = undefined */) {
+    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+require('./_add-to-unscopables')(KEY);
 
-$export$1($export$1.P + $export$1.F * !require('./_strict-method')([].filter, true), 'Array', {
-  // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
-  filter: function filter(callbackfn /* , thisArg */) {
-    return $filter(this, callbackfn, arguments[1]);
+var dP = require('./_object-dp').f;
+var FProto = Function.prototype;
+var nameRE = /^\s*function ([^ (]*)/;
+var NAME$1 = 'name';
+
+// 19.2.4.2 name
+NAME$1 in FProto || require('./_descriptors') && dP(FProto, NAME$1, {
+  configurable: true,
+  get: function () {
+    try {
+      return ('' + this).match(nameRE)[1];
+    } catch (e) {
+      return '';
+    }
   }
 });
 
-var defaults = {
-  xs: 320,
-  sm: 480,
-  md: 720,
-  lg: 1200
+var breakpointNames = ['xs', 'sm', 'md', 'lg', 'xl'];
+var breakpointDefaults = {
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200
 };
 
 var generateMixin = function generateMixin(breakpoints) {
@@ -141,32 +206,32 @@ var generateMixin = function generateMixin(breakpoints) {
     },
     computed: {
       xs: function xs() {
-        return this.windowDimensions.width <= this.breakpoints.xs;
+        return this.windowDimensions.width < this.breakpoints.sm;
       },
       sm: function sm() {
-        return this.windowDimensions.width > this.breakpoints.xs && this.windowDimensions.width <= this.breakpoints.sm;
+        return this.windowDimensions.width >= this.breakpoints.sm && this.windowDimensions.width < this.breakpoints.md;
       },
       md: function md() {
-        return this.windowDimensions.width > this.breakpoints.sm && this.windowDimensions.width <= this.breakpoints.md;
+        return this.windowDimensions.width >= this.breakpoints.md && this.windowDimensions.width < this.breakpoints.lg;
       },
       lg: function lg() {
-        return this.windowDimensions.width > this.breakpoints.md && this.windowDimensions.width <= this.breakpoints.lg;
+        return this.windowDimensions.width >= this.breakpoints.lg && this.windowDimensions.width < this.breakpoints.xl;
       },
       xl: function xl() {
-        return this.windowDimensions.width > this.breakpoints.lg;
+        return this.windowDimensions.width >= this.breakpoints.xl;
       },
       breakpoint: function breakpoint() {
         var _this = this;
 
-        var bpd = Object.keys(this.breakpoints).map(function (bp) {
+        // find which breakpoints is currently active
+        return breakpointNames.map(function (breakpointName) {
           return {
-            breakpoint: bp,
-            isActive: _this[bp]
+            name: breakpointName,
+            active: _this[breakpointName]
           };
-        }).filter(function (bp) {
-          return bp.isActive;
-        });
-        return bpd.length ? bpd.pop().breakpoint : 'xl';
+        }).find(function (breakpoint) {
+          return breakpoint.active;
+        }).name;
       }
     },
     methods: {
@@ -176,10 +241,13 @@ var generateMixin = function generateMixin(breakpoints) {
       }
     },
     mounted: function mounted() {
-      window.addEventListener('resize', this.updateWindowDimensions);
+      // add listener
+      window.addEventListener('resize', this.updateWindowDimensions); // initialize with values
+
       this.updateWindowDimensions();
     },
     beforeDestroy: function beforeDestroy() {
+      // remove listener
       window.removeEventListener('resize', this.updateWindowDimensions);
     }
   };
@@ -187,11 +255,23 @@ var generateMixin = function generateMixin(breakpoints) {
 
 var VueBreakpointer = {
   install: function install(Vue, options) {
-    var breakpoints = options && options.breakpoints ? options.breakpoints : defaults;
+    // basic check for breakpoints
+    var hasBreakpoints = options && options.breakpoints && _typeof(options.breakpoints) === 'object'; // only allow options to take effect when *all* breakpoints are provided
+
+    var hasAllBreakpoints = hasBreakpoints && Object.keys(breakpointDefaults).every(function (breakpoint) {
+      return Object.keys(options.breakpoints).includes(breakpoint);
+    }); // show a warning for partial breakpoint configuration
+
+    if (hasBreakpoints && !hasAllBreakpoints) {
+      console.warn('VueBreakpointer: you must provide either all or no breakpoints');
+    } // assign breakpoints
+
+
+    var breakpoints = hasAllBreakpoints ? options.breakpoints : breakpointDefaults;
     Vue.mixin(generateMixin(breakpoints));
   }
 };
-var VueBreakpointerMixin = generateMixin(defaults);
+var VueBreakpointerMixin = generateMixin(breakpointDefaults);
 
 export default VueBreakpointer;
 export { VueBreakpointerMixin };

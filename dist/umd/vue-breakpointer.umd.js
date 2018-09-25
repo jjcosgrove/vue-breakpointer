@@ -8,12 +8,6 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
-	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.5.7' };
-	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-	});
-	var _core_1 = _core.version;
-
 	var _global = createCommonjsModule(function (module) {
 	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 	var global = module.exports = typeof window != 'undefined' && window.Math == Math
@@ -23,40 +17,11 @@
 	if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 	});
 
-	var _library = false;
-
-	var _shared = createCommonjsModule(function (module) {
-	var SHARED = '__core-js_shared__';
-	var store = _global[SHARED] || (_global[SHARED] = {});
-
-	(module.exports = function (key, value) {
-	  return store[key] || (store[key] = value !== undefined ? value : {});
-	})('versions', []).push({
-	  version: _core.version,
-	  mode: _library ? 'pure' : 'global',
-	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+	var _core = createCommonjsModule(function (module) {
+	var core = module.exports = { version: '2.5.7' };
+	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
-	});
-
-	var id = 0;
-	var px = Math.random();
-	var _uid = function (key) {
-	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-	};
-
-	var _wks = createCommonjsModule(function (module) {
-	var store = _shared('wks');
-
-	var Symbol = _global.Symbol;
-	var USE_SYMBOL = typeof Symbol == 'function';
-
-	var $exports = module.exports = function (name) {
-	  return store[name] || (store[name] =
-	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
-	};
-
-	$exports.store = store;
-	});
+	var _core_1 = _core.version;
 
 	var _isObject = function (it) {
 	  return typeof it === 'object' ? it !== null : typeof it === 'function';
@@ -138,49 +103,15 @@
 	  return object;
 	};
 
-	// 22.1.3.31 Array.prototype[@@unscopables]
-	var UNSCOPABLES = _wks('unscopables');
-	var ArrayProto = Array.prototype;
-	if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
-	var _addToUnscopables = function (key) {
-	  ArrayProto[UNSCOPABLES][key] = true;
-	};
-
-	var _iterStep = function (done, value) {
-	  return { value: value, done: !!done };
-	};
-
-	var _iterators = {};
-
-	var toString = {}.toString;
-
-	var _cof = function (it) {
-	  return toString.call(it).slice(8, -1);
-	};
-
-	// fallback for non-array-like ES3 and non-enumerable old V8 strings
-
-	// eslint-disable-next-line no-prototype-builtins
-	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-	  return _cof(it) == 'String' ? it.split('') : Object(it);
-	};
-
-	// 7.2.1 RequireObjectCoercible(argument)
-	var _defined = function (it) {
-	  if (it == undefined) throw TypeError("Can't call method on  " + it);
-	  return it;
-	};
-
-	// to indexed object, toObject with fallback for non-array-like ES3 strings
-
-
-	var _toIobject = function (it) {
-	  return _iobject(_defined(it));
-	};
-
 	var hasOwnProperty = {}.hasOwnProperty;
 	var _has = function (it, key) {
 	  return hasOwnProperty.call(it, key);
+	};
+
+	var id = 0;
+	var px = Math.random();
+	var _uid = function (key) {
+	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 	};
 
 	var _redefine = createCommonjsModule(function (module) {
@@ -279,6 +210,32 @@
 	$export.R = 128; // real proto method for `library`
 	var _export = $export;
 
+	var toString = {}.toString;
+
+	var _cof = function (it) {
+	  return toString.call(it).slice(8, -1);
+	};
+
+	// fallback for non-array-like ES3 and non-enumerable old V8 strings
+
+	// eslint-disable-next-line no-prototype-builtins
+	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+	  return _cof(it) == 'String' ? it.split('') : Object(it);
+	};
+
+	// 7.2.1 RequireObjectCoercible(argument)
+	var _defined = function (it) {
+	  if (it == undefined) throw TypeError("Can't call method on  " + it);
+	  return it;
+	};
+
+	// to indexed object, toObject with fallback for non-array-like ES3 strings
+
+
+	var _toIobject = function (it) {
+	  return _iobject(_defined(it));
+	};
+
 	// 7.1.4 ToInteger
 	var ceil = Math.ceil;
 	var floor = Math.floor;
@@ -323,6 +280,101 @@
 	    } return !IS_INCLUDES && -1;
 	  };
 	};
+
+	var _library = false;
+
+	var _shared = createCommonjsModule(function (module) {
+	var SHARED = '__core-js_shared__';
+	var store = _global[SHARED] || (_global[SHARED] = {});
+
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: _core.version,
+	  mode: _library ? 'pure' : 'global',
+	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+	});
+	});
+
+	var _wks = createCommonjsModule(function (module) {
+	var store = _shared('wks');
+
+	var Symbol = _global.Symbol;
+	var USE_SYMBOL = typeof Symbol == 'function';
+
+	var $exports = module.exports = function (name) {
+	  return store[name] || (store[name] =
+	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+	};
+
+	$exports.store = store;
+	});
+
+	// 22.1.3.31 Array.prototype[@@unscopables]
+	var UNSCOPABLES = _wks('unscopables');
+	var ArrayProto = Array.prototype;
+	if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
+	var _addToUnscopables = function (key) {
+	  ArrayProto[UNSCOPABLES][key] = true;
+	};
+
+	// https://github.com/tc39/Array.prototype.includes
+
+	var $includes = _arrayIncludes(true);
+
+	_export(_export.P, 'Array', {
+	  includes: function includes(el /* , fromIndex = 0 */) {
+	    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	_addToUnscopables('includes');
+
+	// 7.2.8 IsRegExp(argument)
+
+
+	var MATCH = _wks('match');
+	var _isRegexp = function (it) {
+	  var isRegExp;
+	  return _isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : _cof(it) == 'RegExp');
+	};
+
+	// helper for String#{startsWith, endsWith, includes}
+
+
+
+	var _stringContext = function (that, searchString, NAME) {
+	  if (_isRegexp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
+	  return String(_defined(that));
+	};
+
+	var MATCH$1 = _wks('match');
+	var _failsIsRegexp = function (KEY) {
+	  var re = /./;
+	  try {
+	    '/./'[KEY](re);
+	  } catch (e) {
+	    try {
+	      re[MATCH$1] = false;
+	      return !'/./'[KEY](re);
+	    } catch (f) { /* empty */ }
+	  } return true;
+	};
+
+	var INCLUDES = 'includes';
+
+	_export(_export.P + _export.F * _failsIsRegexp(INCLUDES), 'String', {
+	  includes: function includes(searchString /* , position = 0 */) {
+	    return !!~_stringContext(this, searchString, INCLUDES)
+	      .indexOf(searchString, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var _iterStep = function (done, value) {
+	  return { value: value, done: !!done };
+	};
+
+	var _iterators = {};
 
 	var shared = _shared('keys');
 
@@ -621,6 +673,25 @@
 	  return _cof(arg) == 'Array';
 	};
 
+	// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
+
+
+	_export(_export.S, 'Array', { isArray: _isArray });
+
+	function _typeof(obj) {
+	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+	    _typeof = function (obj) {
+	      return typeof obj;
+	    };
+	  } else {
+	    _typeof = function (obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
 	var SPECIES = _wks('species');
 
 	var _arraySpeciesConstructor = function (original) {
@@ -704,20 +775,43 @@
 	  }
 	});
 
-	var $filter = _arrayMethods(2);
+	// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 
-	_export(_export.P + _export.F * !_strictMethod([].filter, true), 'Array', {
-	  // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
-	  filter: function filter(callbackfn /* , thisArg */) {
-	    return $filter(this, callbackfn, arguments[1]);
+	var $find = _arrayMethods(5);
+	var KEY = 'find';
+	var forced = true;
+	// Shouldn't skip holes
+	if (KEY in []) Array(1)[KEY](function () { forced = false; });
+	_export(_export.P + _export.F * forced, 'Array', {
+	  find: function find(callbackfn /* , that = undefined */) {
+	    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+	_addToUnscopables(KEY);
+
+	var dP$1 = _objectDp.f;
+	var FProto = Function.prototype;
+	var nameRE = /^\s*function ([^ (]*)/;
+	var NAME$1 = 'name';
+
+	// 19.2.4.2 name
+	NAME$1 in FProto || _descriptors && dP$1(FProto, NAME$1, {
+	  configurable: true,
+	  get: function () {
+	    try {
+	      return ('' + this).match(nameRE)[1];
+	    } catch (e) {
+	      return '';
+	    }
 	  }
 	});
 
-	var defaults = {
-	  xs: 320,
-	  sm: 480,
-	  md: 720,
-	  lg: 1200
+	var breakpointNames = ['xs', 'sm', 'md', 'lg', 'xl'];
+	var breakpointDefaults = {
+	  sm: 576,
+	  md: 768,
+	  lg: 992,
+	  xl: 1200
 	};
 
 	var generateMixin = function generateMixin(breakpoints) {
@@ -733,32 +827,32 @@
 	    },
 	    computed: {
 	      xs: function xs() {
-	        return this.windowDimensions.width <= this.breakpoints.xs;
+	        return this.windowDimensions.width < this.breakpoints.sm;
 	      },
 	      sm: function sm() {
-	        return this.windowDimensions.width > this.breakpoints.xs && this.windowDimensions.width <= this.breakpoints.sm;
+	        return this.windowDimensions.width >= this.breakpoints.sm && this.windowDimensions.width < this.breakpoints.md;
 	      },
 	      md: function md() {
-	        return this.windowDimensions.width > this.breakpoints.sm && this.windowDimensions.width <= this.breakpoints.md;
+	        return this.windowDimensions.width >= this.breakpoints.md && this.windowDimensions.width < this.breakpoints.lg;
 	      },
 	      lg: function lg() {
-	        return this.windowDimensions.width > this.breakpoints.md && this.windowDimensions.width <= this.breakpoints.lg;
+	        return this.windowDimensions.width >= this.breakpoints.lg && this.windowDimensions.width < this.breakpoints.xl;
 	      },
 	      xl: function xl() {
-	        return this.windowDimensions.width > this.breakpoints.lg;
+	        return this.windowDimensions.width >= this.breakpoints.xl;
 	      },
 	      breakpoint: function breakpoint() {
 	        var _this = this;
 
-	        var bpd = Object.keys(this.breakpoints).map(function (bp) {
+	        // find which breakpoints is currently active
+	        return breakpointNames.map(function (breakpointName) {
 	          return {
-	            breakpoint: bp,
-	            isActive: _this[bp]
+	            name: breakpointName,
+	            active: _this[breakpointName]
 	          };
-	        }).filter(function (bp) {
-	          return bp.isActive;
-	        });
-	        return bpd.length ? bpd.pop().breakpoint : 'xl';
+	        }).find(function (breakpoint) {
+	          return breakpoint.active;
+	        }).name;
 	      }
 	    },
 	    methods: {
@@ -768,10 +862,13 @@
 	      }
 	    },
 	    mounted: function mounted() {
-	      window.addEventListener('resize', this.updateWindowDimensions);
+	      // add listener
+	      window.addEventListener('resize', this.updateWindowDimensions); // initialize with values
+
 	      this.updateWindowDimensions();
 	    },
 	    beforeDestroy: function beforeDestroy() {
+	      // remove listener
 	      window.removeEventListener('resize', this.updateWindowDimensions);
 	    }
 	  };
@@ -779,14 +876,26 @@
 
 	var VueBreakpointer = {
 	  install: function install(Vue, options) {
-	    var breakpoints = options && options.breakpoints ? options.breakpoints : defaults;
+	    // basic check for breakpoints
+	    var hasBreakpoints = options && options.breakpoints && _typeof(options.breakpoints) === 'object'; // only allow options to take effect when *all* breakpoints are provided
+
+	    var hasAllBreakpoints = hasBreakpoints && Object.keys(breakpointDefaults).every(function (breakpoint) {
+	      return Object.keys(options.breakpoints).includes(breakpoint);
+	    }); // show a warning for partial breakpoint configuration
+
+	    if (hasBreakpoints && !hasAllBreakpoints) {
+	      console.warn('VueBreakpointer: you must provide either all or no breakpoints');
+	    } // assign breakpoints
+
+
+	    var breakpoints = hasAllBreakpoints ? options.breakpoints : breakpointDefaults;
 	    Vue.mixin(generateMixin(breakpoints));
 	  }
 	};
-	var VueBreakpointerMixin = generateMixin(defaults);
+	var VueBreakpointerMixin = generateMixin(breakpointDefaults);
 
-	exports.default = VueBreakpointer;
 	exports.VueBreakpointerMixin = VueBreakpointerMixin;
+	exports.default = VueBreakpointer;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
