@@ -1,11 +1,12 @@
 {
   "name": "vue-breakpointer",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A simple Vue plugin/mixin to augment your Vue instance with breakpoint helpers",
   "author": {
     "name": "Jonathan James Cosgrove",
     "email": "jjcosgrove.inbox@gmail.com"
   },
+  "repository": "github:jjcosgrove/vue-breakpointer",
   "keywords": [
     "breakpoints",
     "responsive",
