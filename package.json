@@ -1,6 +1,6 @@
 {
   "name": "vue-breakpointer",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A simple Vue plugin/mixin to augment your Vue instance with breakpoint helpers",
   "author": {
     "name": "Jonathan James Cosgrove",
@@ -31,19 +31,19 @@
     "@babel/core": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
-    "babel-eslint": "^9.0.0",
-    "eslint": "^5.4.0",
-    "eslint-config-standard": "^12.0.0",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^13.0.1",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^4.7.1",
-    "rollup": "^0.65.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "rollup": "^1.17.0",
     "rollup-plugin-babel": "^4.0.2",
-    "rollup-plugin-babel-minify": "^6.0.0",
-    "rollup-plugin-commonjs": "^9.1.6",
-    "rollup-plugin-node-resolve": "^3.3.0"
+    "rollup-plugin-babel-minify": "^9.0.0",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0"
   },
   "license": "MIT"
 }

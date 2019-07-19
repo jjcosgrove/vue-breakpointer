@@ -1,8 +1,8 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.VueBreakpointer = {})));
-}(this, (function (exports) { 'use strict';
+	(global = global || self, factory(global.VueBreakpointer = {}));
+}(this, function (exports) { 'use strict';
 
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -18,7 +18,7 @@
 	});
 
 	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.5.7' };
+	var core = module.exports = { version: '2.6.9' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
@@ -114,14 +114,29 @@
 	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 	};
 
+	var _shared = createCommonjsModule(function (module) {
+	var SHARED = '__core-js_shared__';
+	var store = _global[SHARED] || (_global[SHARED] = {});
+
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: _core.version,
+	  mode:  'global',
+	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+	});
+	});
+
+	var _functionToString = _shared('native-function-to-string', Function.toString);
+
 	var _redefine = createCommonjsModule(function (module) {
 	var SRC = _uid('src');
+
 	var TO_STRING = 'toString';
-	var $toString = Function[TO_STRING];
-	var TPL = ('' + $toString).split(TO_STRING);
+	var TPL = ('' + _functionToString).split(TO_STRING);
 
 	_core.inspectSource = function (it) {
-	  return $toString.call(it);
+	  return _functionToString.call(it);
 	};
 
 	(module.exports = function (O, key, val, safe) {
@@ -141,7 +156,7 @@
 	  }
 	// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 	})(Function.prototype, TO_STRING, function toString() {
-	  return typeof this == 'function' && this[SRC] || $toString.call(this);
+	  return typeof this == 'function' && this[SRC] || _functionToString.call(this);
 	});
 	});
 
@@ -280,21 +295,6 @@
 	    } return !IS_INCLUDES && -1;
 	  };
 	};
-
-	var _library = false;
-
-	var _shared = createCommonjsModule(function (module) {
-	var SHARED = '__core-js_shared__';
-	var store = _global[SHARED] || (_global[SHARED] = {});
-
-	(module.exports = function (key, value) {
-	  return store[key] || (store[key] = value !== undefined ? value : {});
-	})('versions', []).push({
-	  version: _core.version,
-	  mode: _library ? 'pure' : 'global',
-	  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-	});
-	});
 
 	var _wks = createCommonjsModule(function (module) {
 	var store = _shared('wks');
@@ -537,7 +537,7 @@
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true);
 	      // fix for some old engines
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if ( typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  }
 	  // fix Array#{values, @@iterator}.name in V8 / FF
@@ -546,7 +546,7 @@
 	    $default = function values() { return $native.call(this); };
 	  }
 	  // Define iterator
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if ( (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
 	    _hide(proto, ITERATOR, $default);
 	  }
 	  // Plug for library
@@ -644,6 +644,40 @@
 	    _iterators[NAME] = ArrayValues;
 	    if (explicit) for (key in es6_array_iterator) if (!proto[key]) _redefine(proto, key, es6_array_iterator[key], true);
 	  }
+	}
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+
+	var TAG$1 = _wks('toStringTag');
+	// ES3 wrong here
+	var ARG = _cof(function () { return arguments; }()) == 'Arguments';
+
+	// fallback for IE11 Script Access Denied error
+	var tryGet = function (it, key) {
+	  try {
+	    return it[key];
+	  } catch (e) { /* empty */ }
+	};
+
+	var _classof = function (it) {
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = tryGet(O = Object(it), TAG$1)) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? _cof(O)
+	    // ES3 arguments fallback
+	    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+	// 19.1.3.6 Object.prototype.toString()
+
+	var test = {};
+	test[_wks('toStringTag')] = 'z';
+	if (test + '' != '[object z]') {
+	  _redefine(Object.prototype, 'toString', function toString() {
+	    return '[object ' + _classof(this) + ']';
+	  }, true);
 	}
 
 	// most Object methods by ES6 should accept primitives
@@ -899,4 +933,4 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

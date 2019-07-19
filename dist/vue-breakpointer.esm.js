@@ -115,6 +115,16 @@ addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
 
+// 19.1.3.6 Object.prototype.toString()
+var classof = require('./_classof');
+var test = {};
+test[require('./_wks')('toStringTag')] = 'z';
+if (test + '' != '[object z]') {
+  require('./_redefine')(Object.prototype, 'toString', function toString() {
+    return '[object ' + classof(this) + ']';
+  }, true);
+}
+
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object');
 var $keys = require('./_object-keys');
